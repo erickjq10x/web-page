@@ -21,7 +21,7 @@ exports.showSolo = async (req, res) => {
 
 exports.showCreate = async (req, res) => {
     const games = await Games.findAll();
-    console.log("aca")
+    console.log(games)
     return res.render('review/create', { games } );
 }
 
@@ -29,7 +29,10 @@ exports.showAll = async (req, res) => {
     const allReviews = await this.findAllWithForeignKeys();
     res.render('review/all', {allReviews});
 };
-
+exports.showPopular = async (req, res) => {
+    const popularReviews = await this.findAllPopular();
+    res.render('review/popular',{popularReviews});
+}
 
 exports.createReview = async (req, res) => {
     const account = req.user;
@@ -132,6 +135,28 @@ exports.findAllWithForeignKeys = async () => {
         nest: true,
         order: [
             ['createdAt', 'DESC']
+        ],
+        include: [
+            {
+                model: User,
+                as: "users",
+                attributes: ['id', 'name', 'surname', 'avatar']
+            },
+            {
+                model: Games,
+                as: "games",
+                attributes: ['id', 'name', 'image']
+            }
+        ]
+    });
+}
+
+exports.findAllPopular = async () => {
+    return await Review.findAll({
+        raw: true,
+        nest: true,
+        order: [
+            ['likes', 'DESC']
         ],
         include: [
             {

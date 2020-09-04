@@ -12,4 +12,5 @@ router.get('/view/:id', controller.showSolo)
 
 router.post('/', userController.isAuthenticated, controller.createReview);
 
+router.get('/popular',controller.showPopular)
 module.exports = router;
